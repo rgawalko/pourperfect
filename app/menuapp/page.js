@@ -21,17 +21,26 @@ export default function Page() {
     doc.setFontSize(12);
 
     if (menu.length === 0) {
-      doc.text("No drinks available in the menu.", 10, 20);
-    } else {
-      menu.forEach((drink, index) => {
-        const yPosition = 20 + index * 20;
-        doc.text(`Name: ${drink.name}`, 10, yPosition);
-        doc.text(`Ingredients: ${drink.ingredients.join(", ")}`, 10, yPosition + 5);
-        doc.text(`Alcoholic: ${drink.alcoholic ? "Yes" : "No"}`, 10, yPosition + 10);
-        doc.text(`Category: ${drink.category}`, 10, yPosition + 15);
-        doc.text(`Glass: ${drink.glass}`, 10, yPosition + 20);
-      });
-    }
+        doc.text("No drinks available in the menu.", 10, 20);
+      } else {
+        let yPosition = 20; // Start position
+        const spacing = 20; // Space between each drink's details
+      
+        menu.forEach((drink) => {
+          // Add the drink details
+          doc.text(`Name: ${drink.name}`, 10, yPosition);
+          yPosition += 5;
+          doc.text(`Ingredients: ${drink.ingredients.join(", ")}`, 10, yPosition);
+          yPosition += 5;
+          doc.text(`Alcoholic: ${drink.alcoholic ? "Yes" : "No"}`, 10, yPosition);
+          yPosition += 5;
+          doc.text(`Category: ${drink.category}`, 10, yPosition);
+          yPosition += 5;
+          doc.text(`Glass: ${drink.glass}`, 10, yPosition);
+          yPosition += spacing; // Add space before the next drink
+        });
+      }
+      
 
     doc.save("MockDrinkMenu.pdf");
   };
