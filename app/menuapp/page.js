@@ -1,7 +1,112 @@
-export default function MenuAppPage() {
+"use client";
+
+import { useState } from "react";
+import AddDrink from "./adddrink";
+import FindDrink from "./finddrink";
+import { jsPDF } from "jspdf";
+
+export default function Page() {
+  const [menu, setMenu] = useState([]);
+
+  // Function to add a drink to the mock menu
+  const handleAddDrink = (newDrink) => {
+    setMenu((prevMenu) => [...prevMenu, newDrink]);
+  };
+
+  // Function to generate and download the menu as a PDF
+  const downloadMenuAsPDF = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(18);
+    doc.text("Mock Drink Menu", 10, 10);
+    doc.setFontSize(12);
+
+    if (menu.length === 0) {
+      doc.text("No drinks available in the menu.", 10, 20);
+    } else {
+      menu.forEach((drink, index) => {
+        const yPosition = 20 + index * 20;
+        doc.text(`Name: ${drink.name}`, 10, yPosition);
+        doc.text(`Ingredients: ${drink.ingredients.join(", ")}`, 10, yPosition + 5);
+        doc.text(`Alcoholic: ${drink.alcoholic ? "Yes" : "No"}`, 10, yPosition + 10);
+        doc.text(`Category: ${drink.category}`, 10, yPosition + 15);
+        doc.text(`Glass: ${drink.glass}`, 10, yPosition + 20);
+      });
+    }
+
+    doc.save("MockDrinkMenu.pdf");
+  };
+
   return (
-    <div>
-      <h1 className="text-center">Menu App</h1>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <h1 className="text-3xl font-bold text-gray-800 text-center mb-8">
+        Mock Drink Menu Manager
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Left Column: Add Custom Drink */}
+        <div className="bg-white shadow-md rounded-lg p-6">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Add Your Own Drink
+          </h2>
+          <AddDrink onAdd={handleAddDrink} />
+        </div>
+
+        {/* Right Column: Search for Drinks */}
+        <div className="bg-white shadow-md rounded-lg p-6">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            Search for Drinks
+          </h2>
+          <FindDrink onAdd={handleAddDrink} />
+        </div>
+      </div>
+
+      {/* Display Mock Menu */}
+      <div className="mt-12">
+        <h2 className="text-3xl font-bold text-gray-800 text-center mb-6">
+          Mock Drink Menu
+        </h2>
+        {menu.length === 0 ? (
+          <p className="text-gray-600 text-center">
+            No drinks added to the menu yet. Start adding your custom drinks or
+            search for drinks to add!
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {menu.map((drink, index) => (
+              <div
+                key={index}
+                className="bg-white shadow-md rounded-lg p-4 border border-gray-200"
+              >
+                <h3 className="text-xl font-bold text-gray-800 mb-2 text-center">
+                  {drink.name}
+                </h3>
+                <p className="text-sm text-gray-600 mb-1">
+                  <strong>Ingredients:</strong> {drink.ingredients.join(", ")}
+                </p>
+                <p className="text-sm text-gray-600 mb-1">
+                  <strong>Category:</strong> {drink.category}
+                </p>
+                <p className="text-sm text-gray-600 mb-1">
+                  <strong>Glass:</strong> {drink.glass}
+                </p>
+                <p className="text-sm text-gray-600 mb-1">
+                  <strong>Alcoholic:</strong> {drink.alcoholic ? "Yes" : "No"}
+                </p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Download as PDF Button */}
+      <div className="mt-8 flex justify-center">
+        <button
+          onClick={downloadMenuAsPDF}
+          className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
+        >
+          Download Menu as PDF
+        </button>
+      </div>
     </div>
   );
 }
