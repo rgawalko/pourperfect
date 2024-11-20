@@ -10,7 +10,16 @@ export default function Page() {
 
   // Function to add a drink to the mock menu
   const handleAddDrink = (newDrink) => {
-    setMenu((prevMenu) => [...prevMenu, newDrink]);
+    setMenu((prevMenu) => [...prevMenu, { ...newDrink, price: 0 }]); // Default price set to 0
+  };
+
+  // Function to update the price of a drink
+  const handleUpdatePrice = (index, newPrice) => {
+    setMenu((prevMenu) =>
+      prevMenu.map((drink, i) =>
+        i === index ? { ...drink, price: parseFloat(newPrice) || 0 } : drink
+      )
+    );
   };
 
   // Function to generate and download the menu as a PDF
@@ -21,26 +30,26 @@ export default function Page() {
     doc.setFontSize(12);
 
     if (menu.length === 0) {
-        doc.text("No drinks available in the menu.", 10, 20);
-      } else {
-        let yPosition = 20; // Start position
-        const spacing = 20; // Space between each drink's details
-      
-        menu.forEach((drink) => {
-          // Add the drink details
-          doc.text(`Name: ${drink.name}`, 10, yPosition);
-          yPosition += 5;
-          doc.text(`Ingredients: ${drink.ingredients.join(", ")}`, 10, yPosition);
-          yPosition += 5;
-          doc.text(`Alcoholic: ${drink.alcoholic ? "Yes" : "No"}`, 10, yPosition);
-          yPosition += 5;
-          doc.text(`Category: ${drink.category}`, 10, yPosition);
-          yPosition += 5;
-          doc.text(`Glass: ${drink.glass}`, 10, yPosition);
-          yPosition += spacing; // Add space before the next drink
-        });
-      }
-      
+      doc.text("No drinks available in the menu.", 10, 20);
+    } else {
+      let yPosition = 20; // Start position
+      const spacing = 10; // Space between each drink's details
+
+      menu.forEach((drink) => {
+        doc.text(`Name: ${drink.name}`, 10, yPosition);
+        yPosition += 5;
+        doc.text(`Ingredients: ${drink.ingredients.join(", ")}`, 10, yPosition);
+        yPosition += 5;
+        doc.text(`Alcoholic: ${drink.alcoholic ? "Yes" : "No"}`, 10, yPosition);
+        yPosition += 5;
+        doc.text(`Category: ${drink.category}`, 10, yPosition);
+        yPosition += 5;
+        doc.text(`Glass: ${drink.glass}`, 10, yPosition);
+        yPosition += 5;
+        doc.text(`Price: $${drink.price.toFixed(2)}`, 10, yPosition);
+        yPosition += spacing;
+      });
+    }
 
     doc.save("MockDrinkMenu.pdf");
   };
@@ -101,6 +110,18 @@ export default function Page() {
                 <p className="text-sm text-gray-600 mb-1">
                   <strong>Alcoholic:</strong> {drink.alcoholic ? "Yes" : "No"}
                 </p>
+                <div className="flex items-center mt-4">
+                  <label className="text-sm text-gray-600 mr-2">
+                    <strong>Price:</strong>
+                  </label>
+                  <input
+                    type="number"
+                    value={drink.price || ""}
+                    onChange={(e) => handleUpdatePrice(index, e.target.value)}
+                    className="w-20 border border-gray-300 rounded-lg py-1 px-2 text-sm"
+                    placeholder="0.00"
+                  />
+                </div>
               </div>
             ))}
           </div>
@@ -119,3 +140,4 @@ export default function Page() {
     </div>
   );
 }
+
