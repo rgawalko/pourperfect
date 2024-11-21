@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       fontFamily: {
         handwriting: ['Satisfy', 'cursive'],
+        sans: ['Lato', 'sans-serif'],
       },
     },
   },
